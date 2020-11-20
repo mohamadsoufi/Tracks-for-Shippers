@@ -1,12 +1,12 @@
 import React from "react";
 import FilterBy from "../FilterBy";
 
-export default function ToolsList({ info, filterByCity }) {
+export default function ToolsList({ filterByCity }) {
     return (
         <div>
-            <p>hsdfkhsdfjh</p>
+            <p>temp</p>
 
-            <FilterBy info={info} filterByCity={filterByCity} />
+            <FilterBy filterByCity={filterByCity} />
         </div>
     );
 }
