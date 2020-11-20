@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid } from "@material-ui/data-grid";
-// import CellParams from "@material-ui/data-grid";
 
 export default function DisplayData({ info }) {
     let [data, setData] = useState([]);
@@ -9,8 +8,7 @@ export default function DisplayData({ info }) {
     useEffect(() => {
         setData(info);
     }, [data, info]);
-
-    const rows = [];
+    let rows = [];
 
     const columns = [
         { field: "col1", headerName: "Carrier Name", width: 150 },
@@ -24,9 +22,9 @@ export default function DisplayData({ info }) {
         { field: "col5", headerName: "Intensity Factor", width: 150 },
     ];
 
-    data.map((inf) => {
-        return (rows[inf.id] = {
-            id: inf.id,
+    data.map((inf, i) => {
+        return (rows[i] = {
+            id: i,
             col1: inf.carrier_company_id.toString().slice(0, 6),
             col2: inf.total_co2_emitted.toString().slice(0, 6) + " GT",
             col3: inf.travelled_distance.toString().slice(0, 6) + " km",
@@ -34,7 +32,6 @@ export default function DisplayData({ info }) {
             col5: "i don't know yet",
         });
     });
-
     let handleClick = (row) => {
         for (let i = 0; i < data.length; i++) {
             if (row.data.id === data[i].id) {
@@ -44,7 +41,6 @@ export default function DisplayData({ info }) {
         }
         return;
     };
-    // console.log("selectedRow :", selectedRow);
 
     return (
         <div style={{ height: 700, width: "80%" }}>
