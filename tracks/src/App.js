@@ -1,8 +1,9 @@
 import "./App.css";
 import { useEffect, useState } from "react";
-import DisplayData from "./components/DispalayData";
+import DisplayData from "./components/DisplayData";
 import ToolsList from "./components/ToolsList";
 import Box from "@material-ui/core/Box";
+import { BrowserRouter, Route } from "react-router-dom";
 
 function App() {
     let [info, setInfo] = useState([]);
@@ -31,17 +32,22 @@ function App() {
     };
 
     return (
-        <div className="App">
-            <header className="App-header">header</header>
-            <main style={{ width: "100%" }}>
-                <Box display="flex" p={1}>
-                    <DisplayData info={info} />
-                    <Box p={2}>
-                        <ToolsList info={info} filterByCity={filterByCity} />
+        <BrowserRouter>
+            <div className="App">
+                <header className="App-header">header</header>
+                <main style={{ width: "100%" }}>
+                    <Box display="flex" p={1}>
+                        <DisplayData info={info} />
+                        <Box p={2}>
+                            <ToolsList
+                                info={info}
+                                filterByCity={filterByCity}
+                            />
+                        </Box>
                     </Box>
-                </Box>
-            </main>
-        </div>
+                </main>
+            </div>
+        </BrowserRouter>
     );
 }
 

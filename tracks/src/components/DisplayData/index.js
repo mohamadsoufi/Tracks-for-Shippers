@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid } from "@material-ui/data-grid";
 
+import { Route } from "react-router-dom";
+import RowDetails from "./RowDetails";
+
 export default function DisplayData({ info }) {
     let [data, setData] = useState([]);
-    let [selectedRow, setSelectedRow] = useState([]);
+    let [selectedRow, setSelectedRow] = useState({});
 
     useEffect(() => {
         setData(info);
     }, [data, info]);
+
+    const [open, setOpen] = React.useState(false);
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
     let rows = [];
 
     const columns = [
@@ -34,14 +44,20 @@ export default function DisplayData({ info }) {
     });
     let handleClick = (row) => {
         for (let i = 0; i < data.length; i++) {
-            if (row.data.id === data[i].id) {
+            if (
+                row.data.col3 ===
+                data[i].travelled_distance.toString().slice(0, 6) + " km"
+            ) {
                 setSelectedRow(data[i]);
+
                 break;
             }
         }
+        setOpen(true);
+
         return;
     };
-
+    console.log("selectedRow :", selectedRow);
     return (
         <div style={{ height: 700, width: "80%" }}>
             <DataGrid
@@ -49,6 +65,13 @@ export default function DisplayData({ info }) {
                 columns={columns}
                 onCellClick={(row) => handleClick(row)}
             />
+            {selectedRow.id && (
+                <RowDetails
+                    open={open}
+                    handleClose={handleClose}
+                    selectedRow={selectedRow}
+                />
+            )}
         </div>
     );
 }
