@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid } from "@material-ui/data-grid";
 
-import { Route } from "react-router-dom";
 import RowDetails from "./RowDetails";
 
 export default function DisplayData({ info }) {
@@ -57,9 +56,9 @@ export default function DisplayData({ info }) {
 
         return;
     };
-    console.log("selectedRow :", selectedRow);
+
     return (
-        <div style={{ height: 700, width: "80%" }}>
+        <div style={{ height: 750, width: "65%" }}>
             <DataGrid
                 rows={rows}
                 columns={columns}

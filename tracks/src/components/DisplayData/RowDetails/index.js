@@ -1,4 +1,3 @@
-import { DataGrid } from "@material-ui/data-grid";
 import React from "react";
 import {
     AppBar,
@@ -28,15 +27,20 @@ function createData(name, calories, fat, carbs, protein) {
 }
 
 export default function RowDetails({ handleClose, open, selectedRow }) {
-    console.log("selectedRow :", selectedRow);
-    if (selectedRow.length > 1) {
-        console.log("object");
-    }
+    let estimatedFuelConsumed = selectedRow.estimated_fuel_consumed
+        ? selectedRow.estimated_fuel_consumed.toString().slice(0, 6)
+        : selectedRow.estimated_fuel_consumed;
+
+    let AllocatedDistance = selectedRow.allocated_distance
+        ? selectedRow.allocated_distance.toString().slice(0, 6)
+        : selectedRow.allocated_distance;
+
+    let AllocatedFuel = selectedRow.allocated_fuel
+        ? selectedRow.allocated_fuel.toString().slice(0, 6)
+        : selectedRow.allocated_fuel;
+
     const rows = [
-        createData(
-            "Estimated fuel consumed",
-            selectedRow.estimated_fuel_consumed.toString().slice(0, 6)
-        ),
+        createData("Estimated fuel consumed", estimatedFuelConsumed),
         createData("Weight", selectedRow.weight.toString().slice(0, 6) + " kg"),
         createData(
             "Travelled distance",
@@ -51,8 +55,8 @@ export default function RowDetails({ handleClose, open, selectedRow }) {
             "Type of calculations",
             selectedRow.type_of_calculations.toString()
         ),
-        createData("Allocated distance", selectedRow.allocated_distance),
-        createData("Allocated fuel", selectedRow.allocated_fuel),
+        createData("Allocated distance", AllocatedDistance),
+        createData("Allocated fuel", AllocatedFuel),
         createData(
             "Total co2 emitted",
             selectedRow.total_co2_emitted.toString().slice(0, 6) + " GT"
@@ -103,19 +107,8 @@ export default function RowDetails({ handleClose, open, selectedRow }) {
                                     >
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell>
-                                                    {/* Dessert (100g serving) */}
-                                                </TableCell>
+                                                <TableCell></TableCell>
                                                 <TableCell align="right"></TableCell>
-                                                {/* <TableCell align="right">
-                                                Fat&nbsp;(g)
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                Carbs&nbsp;(g)
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                Protein&nbsp;(g)
-                                            </TableCell> */}
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -130,15 +123,6 @@ export default function RowDetails({ handleClose, open, selectedRow }) {
                                                     <TableCell align="right">
                                                         {row.calories}
                                                     </TableCell>
-                                                    {/* <TableCell align="right">
-                                                    {row.fat}
-                                                </TableCell>
-                                                <TableCell align="right">
-                                                    {row.carbs}
-                                                </TableCell>
-                                                <TableCell align="right">
-                                                    {row.protein}
-                                                </TableCell> */}
                                                 </TableRow>
                                             ))}
                                         </TableBody>
