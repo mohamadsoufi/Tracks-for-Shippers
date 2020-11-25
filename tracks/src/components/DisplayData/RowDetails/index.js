@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import {
     AppBar,
     Dialog,
@@ -18,12 +18,12 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 
-const Transition = React.forwardRef(function Transition(props, ref) {
+const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
+function createData(title, value) {
+    return { title, value };
 }
 
 export default function RowDetails({ handleClose, open, selectedRow }) {
@@ -113,15 +113,15 @@ export default function RowDetails({ handleClose, open, selectedRow }) {
                                         </TableHead>
                                         <TableBody>
                                             {rows.map((row) => (
-                                                <TableRow key={row.name}>
+                                                <TableRow key={row.title}>
                                                     <TableCell
                                                         component="th"
                                                         scope="row"
                                                     >
-                                                        {row.name}
+                                                        {row.title}
                                                     </TableCell>
                                                     <TableCell align="right">
-                                                        {row.calories}
+                                                        {row.value}
                                                     </TableCell>
                                                 </TableRow>
                                             ))}

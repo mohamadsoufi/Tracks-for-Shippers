@@ -1,47 +1,90 @@
 import React, { useEffect, useState } from "react";
+import FilterByCity from "./FilterByCity";
 import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
 import Fade from "@material-ui/core/Fade";
-import { FormControl, InputLabel, Select } from "@material-ui/core";
-import Box from "@material-ui/core/Box";
+import FilterByTypeOfCalculation from "./FilterByTypeOfCalculation";
+import FilterByGoodsType from "./FilterByGoodsType";
+import Axios from "axios";
 
-export default function FilterBy({ filterByCity }) {
+export default function FilterBy({
+    filterByCity,
+    filterByCalculation,
+    filterByGoodsType,
+}) {
     const [anchorEl, setAnchorEl] = useState(null);
-    const [availableCities, setAvailableCities] = useState([]);
+    const [availableStartCities, setAvailableStartCities] = useState([]);
+    const [availableEndCities, setAvailableEndCities] = useState([]);
+    const [availableCalc, setAvailableCalc] = useState([]);
+    const [availableGoods, setAvailableGoods] = useState([]);
     const [startCity, setStartCity] = useState([]);
+    const [typeOfCalc, setTypeOfCalc] = useState([]);
+    const [typeOfGoods, setTypeOfGoods] = useState([]);
     const [endCity, setEndCity] = useState([]);
     const open = Boolean(anchorEl);
 
+    useEffect(() => {
+        Axios.get("/all-data").then(({ data }) => {
+            let startCities = data.map((elem) => {
+                return elem.start_city;
+            });
+
+            let endCities = data.map((elem) => {
+                return elem.end_city;
+            });
+            let calc = data.map((elem) => {
+                return elem.type_of_calculations;
+            });
+            let goods = data.map((elem) => {
+                return elem.type_of_goods;
+            });
+            setAvailableStartCities(startCities);
+            setAvailableEndCities(endCities);
+            setAvailableCalc(calc);
+            setAvailableGoods(goods);
+        });
+    }, []);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
-    };
-
-    const handleSubmitFilter = (e) => {
-        filterByCity(startCity, endCity);
-
-        setAnchorEl(null);
     };
 
     const handleClose = () => {
         setAnchorEl(null);
     };
 
-    useEffect(() => {
-        fetch("/api")
-            .then((data) => data.json())
-            .then((data) => {
-                let res = data.map((elem) => {
-                    return elem.start_city;
-                });
-                setAvailableCities(res);
-            });
-    }, []);
-    let uniqAvailableCities = [...new Set(availableCities)];
+    // Filter by type of calc
+    const handleCalc = (event) => {
+        setTypeOfCalc(event.target.value);
+    };
 
-    let citiesList = [];
-    uniqAvailableCities.forEach((city) => {
-        citiesList.push({ start_city: city });
+    let uniqAvailableCalc = [...new Set(availableCalc)];
+    let calcList = [];
+    uniqAvailableCalc.forEach((calc) => {
+        calcList.push({ type_of_calculation: calc });
+    });
+    //Filter by type of Goods
+    const handleGoods = (event) => {
+        setTypeOfGoods(event.target.value);
+    };
+
+    let uniqAvailableGoods = [...new Set(availableGoods)];
+    let goodsList = [];
+    uniqAvailableGoods.forEach((goods) => {
+        goodsList.push({ type_of_goods: goods });
+    });
+
+    //Filter by Start City
+    let uniqAvailableStartCities = [...new Set(availableStartCities)];
+    let startCitiesList = [];
+    uniqAvailableStartCities.forEach((city) => {
+        startCitiesList.push({ start_city: city });
+    });
+
+    //Filter by end City
+    let uniqAvailableEndCities = [...new Set(availableEndCities)];
+    let endCitiesList = [];
+    uniqAvailableEndCities.forEach((city) => {
+        endCitiesList.push({ end_city: city });
     });
 
     const handleStart = (event) => {
@@ -50,6 +93,16 @@ export default function FilterBy({ filterByCity }) {
 
     const handleEnd = (event) => {
         setEndCity(event.target.value);
+    };
+
+    const handleSubmitFilter = () => {
+        if (startCity.length > 1 && endCity.length > 1)
+            filterByCity(startCity, endCity);
+
+        if (typeOfCalc.length > 1) filterByCalculation(typeOfCalc);
+        if (typeOfGoods.length > 1) filterByGoodsType(typeOfGoods);
+
+        setAnchorEl(null);
     };
 
     return (
@@ -61,7 +114,7 @@ export default function FilterBy({ filterByCity }) {
                 aria-haspopup="true"
                 onClick={handleClick}
             >
-                Filter By
+                Filter
             </Button>
             <Menu
                 id="fade-menu"
@@ -71,65 +124,29 @@ export default function FilterBy({ filterByCity }) {
                 onClose={handleClose}
                 TransitionComponent={Fade}
             >
-                <MenuItem onClick={handleClose}>Type of Calculation</MenuItem>
-                <MenuItem onClick={handleClose}>Goods Type</MenuItem>
-                <MenuItem>
-                    <Box>
-                        <Box p={1}>
-                            <FormControl>
-                                <InputLabel id="demo-simple-select-label1">
-                                    Start city
-                                </InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label1"
-                                    id="demo-simple-select1"
-                                    value={startCity + ""}
-                                    onChange={handleStart}
-                                    style={{ width: "90px" }}
-                                >
-                                    {uniqAvailableCities.map((city) => (
-                                        <MenuItem
-                                            key={city + "1"}
-                                            value={city + ""}
-                                        >
-                                            {city}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                        <Box p={1}>
-                            <FormControl>
-                                <InputLabel id="demo-simple-select-label">
-                                    End city
-                                </InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={endCity + ""}
-                                    onChange={handleEnd}
-                                    style={{ width: "90px" }}
-                                >
-                                    {uniqAvailableCities.map((city) => (
-                                        <MenuItem key={city} value={city + ""}>
-                                            {city}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                        <Box mx={1}>
-                            <Button
-                                size="small"
-                                color="primary"
-                                variant="contained"
-                                onClick={handleSubmitFilter}
-                            >
-                                Submit
-                            </Button>
-                        </Box>
-                    </Box>
-                </MenuItem>
+                <FilterByTypeOfCalculation
+                    typeOfCalc={typeOfCalc}
+                    uniqAvailableCalc={uniqAvailableCalc}
+                    handleCalc={handleCalc}
+                    handleSubmitFilter={handleSubmitFilter}
+                />
+                <hr />
+                <FilterByGoodsType
+                    typeOfGoods={typeOfGoods}
+                    uniqAvailableGoods={uniqAvailableGoods}
+                    handleGoods={handleGoods}
+                    handleSubmitFilter={handleSubmitFilter}
+                />
+                <hr />
+                <FilterByCity
+                    startCity={startCity}
+                    endCity={endCity}
+                    uniqAvailableStartCities={uniqAvailableStartCities}
+                    uniqAvailableEndCities={uniqAvailableEndCities}
+                    handleStart={handleStart}
+                    handleEnd={handleEnd}
+                    handleSubmitFilter={handleSubmitFilter}
+                />
             </Menu>
         </div>
     );

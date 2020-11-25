@@ -5,6 +5,7 @@ import ToolsList from "./components/ToolsList";
 import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core";
 import axios from "axios";
+import parseDefaultDate from "./utils/parseDefaultDate";
 const useStyles = makeStyles((theme) => ({
     root: {
         padding: theme.spacing(1),
@@ -19,24 +20,9 @@ const useStyles = makeStyles((theme) => ({
         },
     },
 }));
-// timeZone
-var split = new Date().toString().split(" ");
-var gtm = split[5];
-let timeZone = gtm.slice(3, 7);
 
-var today = new Date();
-var dayLastMonth = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate() - 28
-);
+let [timeZone, lastMonth] = parseDefaultDate();
 
-let lastMonth =
-    dayLastMonth.getFullYear() +
-    "-" +
-    (dayLastMonth.getMonth() + 1) +
-    "-" +
-    dayLastMonth.getDate();
 var params = { lastMonth, timeZone };
 function App() {
     let [info, setInfo] = useState([]);
@@ -50,6 +36,18 @@ function App() {
             setInfo(data);
         });
     }, []);
+
+    const filterByDate = ({ start, timeZone }, endDate) => {
+        axios
+            .get("/selected-date", { params: { start, endDate, timeZone } })
+            .then(({ data }) => {
+                setInfo(data);
+                console.log("data in filter >>>>>>>>>>> :", data);
+            })
+            .catch((err) => {
+                console.log("err :", err);
+            });
+    };
 
     const filterByCity = (startCity, endCity) => {
         let res;
@@ -104,6 +102,7 @@ function App() {
                     <Box p={4} m={5}>
                         <ToolsList
                             info={info}
+                            filterByDate={filterByDate}
                             filterByCalculation={filterByCalculation}
                             filterByCity={filterByCity}
                             filterByGoodsType={filterByGoodsType}

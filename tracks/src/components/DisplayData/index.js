@@ -31,16 +31,21 @@ export default function DisplayData({ info }) {
         { field: "col5", headerName: "Intensity Factor", width: 150 },
     ];
 
-    data.map((inf, i) => {
-        return (rows[i] = {
-            id: i,
-            col1: inf.carrier_company_id.toString().slice(0, 6),
-            col2: inf.total_co2_emitted.toString().slice(0, 6) + " GT",
-            col3: inf.travelled_distance.toString().slice(0, 6) + " km",
-            col4: inf.weight.toString().slice(0, 6) + " kg",
-            col5: "i don't know yet",
+    console.log("data in display data :", data);
+    if (data.length > 0) {
+        data.map((inf, i) => {
+            return (rows[i] = {
+                id: i,
+                col1: inf.carrier_company_id.toString(),
+                col2: inf.total_co2_emitted.toString().slice(0, 6) + " GT",
+                col3: inf.travelled_distance.toString().slice(0, 6) + " km",
+                col4: inf.weight.toString().slice(0, 6) + " kg",
+                col5: "i don't know yet",
+            });
         });
-    });
+    } else {
+        rows[0] = { id: 1, co1: "no Data found" };
+    }
     let handleClick = (row) => {
         for (let i = 0; i < data.length; i++) {
             if (
