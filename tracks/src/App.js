@@ -5,7 +5,7 @@ import ToolsList from "./components/ToolsList";
 import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core";
 import axios from "axios";
-import parseDefaultDate from "./utils/parseDefaultDate";
+import { parseDefaultDate } from "./utils";
 const useStyles = makeStyles((theme) => ({
     root: {
         padding: theme.spacing(1),
@@ -21,28 +21,32 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-let [timeZone, lastMonth] = parseDefaultDate();
+let [timeZone, last10Weeks] = parseDefaultDate();
 
-var params = { lastMonth, timeZone };
+var params = { last10Weeks, timeZone };
 function App() {
     let [info, setInfo] = useState([]);
-    // let [apiInfo, setApiInfo] = useState([]);
-    let [check, setCheck] = useState(false);
+    let [apiInfo, setApiInfo] = useState([]);
     const classes = useStyles();
 
     useEffect(() => {
-        axios.get("/api", { params }).then(({ data }) => {
-            // setApiInfo(data);
-            setInfo(data);
-        });
+        axios
+            .get("/api", { params })
+            .then(({ data }) => {
+                setInfo(data);
+                setApiInfo(data);
+            })
+            .catch((err) => {
+                console.log("err :", err);
+            });
     }, []);
 
-    const filterByDate = ({ start, timeZone }, endDate) => {
+    const filterByDate = ([start, timeZone], endDate) => {
         axios
             .get("/selected-date", { params: { start, endDate, timeZone } })
             .then(({ data }) => {
                 setInfo(data);
-                console.log("data in filter >>>>>>>>>>> :", data);
+                setApiInfo(data);
             })
             .catch((err) => {
                 console.log("err :", err);
@@ -50,53 +54,40 @@ function App() {
     };
 
     const filterByCity = (startCity, endCity) => {
-        let res;
-        if (!check) {
-            console.log("no fetch :");
-            res = info.filter((details) => {
-                return (
-                    details.start_city === startCity &&
-                    details.end_city === endCity
-                );
-            });
+        let res = apiInfo.filter((details) => {
+            return (
+                details.start_city === startCity && details.end_city === endCity
+            );
+        });
+        if (res.length > 0) {
             setInfo(res);
-            setCheck(true);
         } else {
-            axios.get("/api", { params }).then(({ data }) => {
-                console.log("data in filter:", data);
-                res = data.filter((details) => {
-                    return (
-                        details.start_city === startCity &&
-                        details.end_city === endCity
-                    );
-                });
-                setInfo(res);
-                setCheck(false);
-            });
+            setInfo([{ id: 1, col3: "no Data found" }]);
         }
     };
 
     const filterByCalculation = (typeOfCalc) => {
-        axios.get("/api", { params }).then(({ data }) => {
-            let res = data.filter((details) => {
-                return details.type_of_calculations === typeOfCalc;
-            });
-            setInfo(res);
+        let res = apiInfo.filter((details) => {
+            return details.type_of_calculations === typeOfCalc;
         });
+        setInfo(res);
     };
 
     const filterByGoodsType = (typeOfGoods) => {
-        axios.get("/api", { params }).then(({ data }) => {
-            let res = data.filter((details) => {
-                return details.type_of_goods === typeOfGoods;
-            });
-            setInfo(res);
+        let res = apiInfo.filter((details) => {
+            return details.type_of_goods === typeOfGoods;
         });
+        setInfo(res);
     };
 
     return (
         <div className="App">
-            <header className="App-header">header</header>
+            <header className="App-header">
+                <div>
+                    <p>Tracks</p>
+                </div>
+                <div></div>
+            </header>
             <main className={classes.root}>
                 <Box display="flex" p={1}>
                     <Box p={4} m={5}>
@@ -111,6 +102,9 @@ function App() {
                     <DisplayData info={info} />
                 </Box>
             </main>
+            <footer>
+                <p>Copyright & copy; 2020 - All Rights Reserved</p>
+            </footer>
         </div>
     );
 }
