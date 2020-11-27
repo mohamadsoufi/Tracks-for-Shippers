@@ -1,3 +1,4 @@
+import { Box } from "@material-ui/core";
 import React from "react";
 import FilterBy from "../FilterBy";
 import SelectByDate from "../SelectByDate";
@@ -7,17 +8,21 @@ export default function ToolsList({
     filterByCalculation,
     filterByGoodsType,
     filterByDate,
+    info,
 }) {
     return (
         <div>
-            <p>temp</p>
-
-            <SelectByDate filterByDate={filterByDate} />
-            <FilterBy
-                filterByCity={filterByCity}
-                filterByCalculation={filterByCalculation}
-                filterByGoodsType={filterByGoodsType}
-            />
+            <Box p={1}>
+                <SelectByDate filterByDate={filterByDate} />
+            </Box>
+            <Box p={1}>
+                <FilterBy
+                    info={info}
+                    filterByCity={filterByCity}
+                    filterByCalculation={filterByCalculation}
+                    filterByGoodsType={filterByGoodsType}
+                />
+            </Box>
         </div>
     );
 }

@@ -12,24 +12,26 @@ app.get("/ping", function (req, res) {
 });
 
 app.get("/api", function (req, res) {
-    let { lastMonth, timeZone } = req.query;
-    db.getDefaultData(lastMonth, timeZone).then(({ rows }) => {
+    let { last10Weeks, timeZone } = req.query;
+    db.getDefaultData(last10Weeks, timeZone).then(({ rows }) => {
         res.json(rows);
     });
 });
 
 app.get("/all-data", function (req, res) {
-    db.getData().then(({ rows }) => {
-        res.json(rows);
-    });
+    db.getData()
+        .then(({ rows }) => {
+            res.json(rows);
+        })
+        .catch((err) => {
+            console.log("err :", err);
+        });
 });
 
 app.get("/selected-date", function (req, res) {
     let { start, endDate, timeZone } = req.query;
-
-    db.getSelectedDate(start, endDate, timeZone).then(({ rows }) => {
-        // console.log("rows :", rows);
-
+    let end = endDate[0];
+    db.getSelectedDate(start, end, timeZone).then(({ rows }) => {
         res.json(rows);
     });
 });

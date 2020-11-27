@@ -5,12 +5,14 @@ import Menu from "@material-ui/core/Menu";
 import Fade from "@material-ui/core/Fade";
 import FilterByTypeOfCalculation from "./FilterByTypeOfCalculation";
 import FilterByGoodsType from "./FilterByGoodsType";
-import Axios from "axios";
+
+import { makeUnique } from "../../utils";
 
 export default function FilterBy({
     filterByCity,
     filterByCalculation,
     filterByGoodsType,
+    info,
 }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const [availableStartCities, setAvailableStartCities] = useState([]);
@@ -24,26 +26,25 @@ export default function FilterBy({
     const open = Boolean(anchorEl);
 
     useEffect(() => {
-        Axios.get("/all-data").then(({ data }) => {
-            let startCities = data.map((elem) => {
-                return elem.start_city;
-            });
-
-            let endCities = data.map((elem) => {
-                return elem.end_city;
-            });
-            let calc = data.map((elem) => {
-                return elem.type_of_calculations;
-            });
-            let goods = data.map((elem) => {
-                return elem.type_of_goods;
-            });
-            setAvailableStartCities(startCities);
-            setAvailableEndCities(endCities);
-            setAvailableCalc(calc);
-            setAvailableGoods(goods);
+        let startCities = info.map((elem) => {
+            return elem.start_city;
         });
-    }, []);
+
+        let endCities = info.map((elem) => {
+            return elem.end_city;
+        });
+        let calc = info.map((elem) => {
+            return elem.type_of_calculations;
+        });
+        let goods = info.map((elem) => {
+            return elem.type_of_goods;
+        });
+        setAvailableStartCities(startCities);
+        setAvailableEndCities(endCities);
+        setAvailableCalc(calc);
+        setAvailableGoods(goods);
+    }, [info]);
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -57,36 +58,23 @@ export default function FilterBy({
         setTypeOfCalc(event.target.value);
     };
 
-    let uniqAvailableCalc = [...new Set(availableCalc)];
-    let calcList = [];
-    uniqAvailableCalc.forEach((calc) => {
-        calcList.push({ type_of_calculation: calc });
-    });
-    //Filter by type of Goods
+    let uniqAvailableCalc = makeUnique(availableCalc);
+
+    //Filter by Goods
     const handleGoods = (event) => {
         setTypeOfGoods(event.target.value);
     };
+    let uniqAvailableGoods = makeUnique(availableGoods);
 
-    let uniqAvailableGoods = [...new Set(availableGoods)];
-    let goodsList = [];
-    uniqAvailableGoods.forEach((goods) => {
-        goodsList.push({ type_of_goods: goods });
-    });
+    //Filter by Cities
 
-    //Filter by Start City
-    let uniqAvailableStartCities = [...new Set(availableStartCities)];
-    let startCitiesList = [];
-    uniqAvailableStartCities.forEach((city) => {
-        startCitiesList.push({ start_city: city });
-    });
+    let uniqAvailableStartCities = makeUnique(availableStartCities);
 
-    //Filter by end City
-    let uniqAvailableEndCities = [...new Set(availableEndCities)];
-    let endCitiesList = [];
-    uniqAvailableEndCities.forEach((city) => {
-        endCitiesList.push({ end_city: city });
-    });
-
+    if (endCity) {
+        uniqAvailableStartCities = uniqAvailableStartCities.filter((elem) => {
+            return elem !== endCity;
+        });
+    }
     const handleStart = (event) => {
         setStartCity(event.target.value);
     };
@@ -95,9 +83,16 @@ export default function FilterBy({
         setEndCity(event.target.value);
     };
 
+    let uniqAvailableEndCities = makeUnique(availableEndCities);
+    if (startCity) {
+        uniqAvailableEndCities = uniqAvailableEndCities.filter((elem) => {
+            return elem !== startCity;
+        });
+    }
     const handleSubmitFilter = () => {
-        if (startCity.length > 1 && endCity.length > 1)
+        if (startCity.length > 1 && endCity.length > 1) {
             filterByCity(startCity, endCity);
+        }
 
         if (typeOfCalc.length > 1) filterByCalculation(typeOfCalc);
         if (typeOfGoods.length > 1) filterByGoodsType(typeOfGoods);
@@ -106,13 +101,14 @@ export default function FilterBy({
     };
 
     return (
-        <div>
+        <>
             <Button
                 color="primary"
                 variant="contained"
                 aria-controls="fade-menu"
                 aria-haspopup="true"
                 onClick={handleClick}
+                style={{ width: "145px" }}
             >
                 Filter
             </Button>
@@ -130,14 +126,12 @@ export default function FilterBy({
                     handleCalc={handleCalc}
                     handleSubmitFilter={handleSubmitFilter}
                 />
-                <hr />
                 <FilterByGoodsType
                     typeOfGoods={typeOfGoods}
                     uniqAvailableGoods={uniqAvailableGoods}
                     handleGoods={handleGoods}
                     handleSubmitFilter={handleSubmitFilter}
                 />
-                <hr />
                 <FilterByCity
                     startCity={startCity}
                     endCity={endCity}
@@ -148,6 +142,6 @@ export default function FilterBy({
                     handleSubmitFilter={handleSubmitFilter}
                 />
             </Menu>
-        </div>
+        </>
     );
 }

@@ -78,12 +78,12 @@ export default function RowDetails({ handleClose, open, selectedRow }) {
     return (
         <div>
             <Dialog
-                fullScreen
+                // fullScreen
                 open={open}
                 onClose={handleClose}
                 TransitionComponent={Transition}
             >
-                <AppBar>
+                <AppBar style={{ backgroundColor: "#282c34" }}>
                     <Toolbar>
                         <IconButton
                             edge="start"
@@ -96,14 +96,37 @@ export default function RowDetails({ handleClose, open, selectedRow }) {
                         <Typography variant="h6">close</Typography>
                     </Toolbar>
                 </AppBar>
-                <List>
-                    <Box mt={20}>
-                        <ListItem button>
+                <List
+                    style={{
+                        backgroundColor: "#BABABA",
+                    }}
+                >
+                    <Box
+                        mt={20}
+                        style={{
+                            margin: 0,
+                        }}
+                    >
+                        <ListItem
+                            style={{
+                                margin: "0 auto",
+                                cursor: "text",
+                            }}
+                            button
+                        >
                             <TableContainer>
-                                <Box p={1} px="40%">
+                                <Box
+                                    p={1}
+                                    px="40%"
+                                    display="flex"
+                                    justifyContent="center"
+                                >
                                     <Table
                                         size="small"
                                         aria-label="a dense table"
+                                        style={{
+                                            width: 450,
+                                        }}
                                     >
                                         <TableHead>
                                             <TableRow>
@@ -111,16 +134,30 @@ export default function RowDetails({ handleClose, open, selectedRow }) {
                                                 <TableCell align="right"></TableCell>
                                             </TableRow>
                                         </TableHead>
-                                        <TableBody>
+                                        <TableBody
+                                            style={{
+                                                backgroundColor: "#BABABA",
+                                            }}
+                                        >
                                             {rows.map((row) => (
                                                 <TableRow key={row.title}>
                                                     <TableCell
+                                                        style={{
+                                                            width: 900,
+                                                            fontSize: "18px",
+                                                        }}
                                                         component="th"
                                                         scope="row"
                                                     >
                                                         {row.title}
                                                     </TableCell>
-                                                    <TableCell align="right">
+                                                    <TableCell
+                                                        style={{
+                                                            width: 200,
+                                                            fontSize: "14px",
+                                                        }}
+                                                        align="right"
+                                                    >
                                                         {row.value}
                                                     </TableCell>
                                                 </TableRow>

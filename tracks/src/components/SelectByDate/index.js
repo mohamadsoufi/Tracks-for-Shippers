@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-// import { makeStyles } from "@material-ui/core/styles";
 import { Box, Button, Menu } from "@material-ui/core";
 import Fade from "@material-ui/core/Fade";
 import DateFnsUtils from "@date-io/date-fns";
@@ -7,7 +6,7 @@ import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker,
 } from "@material-ui/pickers";
-import parseDate from "../../utils/parseDate";
+import { parseDate } from "../../utils";
 
 export default function SelectedByDate({ filterByDate }) {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -16,20 +15,22 @@ export default function SelectedByDate({ filterByDate }) {
     const [inputDateStart, setInputDateStart] = React.useState(new Date());
     const [inputDateEnd, setInputDateEnd] = React.useState(new Date());
     const [selectedStartDate, setSelectedStartDate] = React.useState(
-        new Date()
+        parseDate(new Date())
     );
-    const [selectedEndDate, setSelectedEndDate] = React.useState(new Date());
+    const [selectedEndDate, setSelectedEndDate] = React.useState(
+        parseDate(new Date())
+    );
 
     const handleStartChange = (date) => {
-        let timeZone = parseDate(date)[0];
-        let start = parseDate(date)[1];
+        let timeZone = parseDate(date)[1];
+        let start = parseDate(date)[0];
         setInputDateStart(date);
-        setSelectedStartDate({ start, timeZone });
+        setSelectedStartDate([start, timeZone]);
     };
 
     const handleEndChange = (date) => {
         setInputDateEnd(date);
-        setSelectedEndDate(parseDate(date)[1]);
+        setSelectedEndDate(parseDate(date));
     };
 
     const handleClick = (event) => {
@@ -40,29 +41,23 @@ export default function SelectedByDate({ filterByDate }) {
     };
 
     const handleSubmitFilter = () => {
-        // if (startCity.length > 1 && endCity.length > 1)
-        //     filterByCity(startCity, endCity);
-
-        // if (typeOfCalc.length > 1) filterByCalculation(typeOfCalc);
-        // if (typeOfGoods.length > 1) filterByGoodsType(typeOfGoods);
         filterByDate(selectedStartDate, selectedEndDate);
         setAnchorEl(null);
     };
-    // console.log("selectedStartDate :", selectedStartDate);
-    // console.log("selectedEndDate :", selectedEndDate);
+
     return (
         <>
             <Button
                 color="primary"
                 variant="contained"
-                aria-controls="fade-menu"
+                aria-controls="fade-menu1"
                 aria-haspopup="true"
                 onClick={handleClick}
             >
                 Select by Date
             </Button>
             <Menu
-                id="fade-menu"
+                id="fade-menu1"
                 anchorEl={anchorEl}
                 keepMounted
                 open={open}
@@ -83,6 +78,7 @@ export default function SelectedByDate({ filterByDate }) {
                             KeyboardButtonProps={{
                                 "aria-label": "change date",
                             }}
+                            style={{ width: "185px" }}
                         />
                         <KeyboardDatePicker
                             disableToolbar
@@ -96,6 +92,7 @@ export default function SelectedByDate({ filterByDate }) {
                             KeyboardButtonProps={{
                                 "aria-label": "change date",
                             }}
+                            style={{ width: "185px" }}
                         />
                     </Box>
                 </MuiPickersUtilsProvider>
