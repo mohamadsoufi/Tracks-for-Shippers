@@ -30,13 +30,19 @@ export function parseDate(date) {
 export function rowMaker(info) {
     let rowsArr = [];
     info.map((inf, i) => {
+        let weight = inf.weight.toString().slice(0, 6);
+        let totalCo2 = inf.total_co2_emitted.toString().slice(0, 6);
+        let distance = inf.travelled_distance.toString().slice(0, 6);
+        let IntensityFactor = ((totalCo2 / weight / distance) * 1000)
+            .toString()
+            .slice(0, 6);
         return (rowsArr[i] = {
             id: i,
             col1: inf.carrier_company_id.toString(),
-            col2: inf.total_co2_emitted.toString().slice(0, 6) + " GT",
-            col3: inf.travelled_distance.toString().slice(0, 6) + " km",
-            col4: inf.weight.toString().slice(0, 6) + " kg",
-            col5: "i don't know yet",
+            col2: totalCo2 + " GT",
+            col3: distance + " km",
+            col4: weight + " kg",
+            col5: IntensityFactor,
         });
     });
     return rowsArr;
